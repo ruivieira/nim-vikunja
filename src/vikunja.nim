@@ -29,6 +29,22 @@ type VikunjaLable* = object
   title*: string
   updated*: string
 
+type VikunjaList* = object
+    background_blur_hash*: string
+    # background_information*: Option[string]
+    created*: string
+    description*: string
+    hex_color*: string
+    id*: int
+    identifier*: string
+    is_archived*: bool
+    is_favorite*: bool
+    namespace_id*: int
+    owner*: VikunjaUser
+    position*: int
+    title*: string
+    updated*: string
+
 type VikunjaTask* = object
     assignees*: Option[VikunjaUser]
     # files
@@ -115,8 +131,17 @@ proc getTask*(vikunja: Vikunja, id: int): VikunjaTask =
     let task = getSingle[VikunjaTask](vikunja, url)
     return task
 
-proc createTask*(vikunja:Vikunja, task: VikunjaCreateTask) =
+proc createTask*(vikunja:Vikunja, task: VikunjaCreateTask): Response =
     let url = &"{vikunja.url}/lists/{task.list_id}"
     let response = putSingle[VikunjaCreateTask](vikunja, url, task)
-    echo response.body
-    
+    return response
+
+proc getLists*(vikunja: Vikunja): seq[VikunjaList] =
+    let url = &"{vikunja.url}/lists"
+    let tasks = getAll[VikunjaList](vikunja, url)
+    return tasks
+
+proc getList*(vikunja: Vikunja, id: int): VikunjaList =
+    let url = &"{vikunja.url}/lists/{id}"
+    let task = getSingle[VikunjaList](vikunja, url)
+    return task
